@@ -48,7 +48,41 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor()
             }
 
-            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models)
+            params={
+                "Linear Regression":{},
+                "Lasso": {
+                    'alpha': [0.1, 0.5, 1.0, 2.0]
+                },
+                "Ridge": {
+                    'alpha': [0.1, 0.5, 1.0, 2.0]
+                },
+                "Decision Tree": {
+                    'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                },
+                "Random Forest":{
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "K-Neighbors Regressor": {
+                    'n_neighbors': [3, 5, 7, 9, 11],
+                    'weights': ['uniform', 'distance']
+                },
+                "XGBRegressor":{
+                    'learning_rate':[.1,.01,.05,.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "CatBoosting Regressor":{
+                    'depth': [6,8,10],
+                    'learning_rate': [0.01, 0.05, 0.1],
+                    'iterations': [30, 50, 100]
+                },
+                "AdaBoost Regressor":{
+                    'learning_rate':[.1,.01,0.5,.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                }
+            }
+
+
+            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models,param=params)
 
             best_model_score=max(sorted(model_report.values()))
 
@@ -64,7 +98,9 @@ class ModelTrainer:
                 obj=best_model # to specify the trained model that will be saved
             )
             
-            return best_model_score
+            predicted= best_model.predict(X_test) # to make predictions on the testing data using the best model
+            r2_square = r2_score(y_test, predicted) # to calculate the R2 score for the testing data using the best model
+            return r2_square
             
         except Exception as e:
             raise CustomException(e,sys)

@@ -21,7 +21,7 @@ def save_object(file_path: str, obj: object):
         raise CustomException(e, sys) # to raise a custom exception if any error occurs during the saving process
 
 
-def evaluate_models(X_train, y_train, X_test, y_test, models):
+def evaluate_models(X_train, y_train, X_test, y_test, models,param):
     try:
         report = {} # to initialize an empty dictionary to store the evaluation report of the models
 
